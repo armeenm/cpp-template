@@ -30,6 +30,6 @@ add_project_arguments(
 executable(
   'template',
   ['src/main.cpp'],
-  #dependencies: [dependency('fmt')],
+  dependencies: [dependency('fmt')],
   install: true
 )

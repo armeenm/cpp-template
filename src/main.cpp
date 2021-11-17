@@ -1,5 +1,5 @@
-#include <cstdio>
+#include <fmt/core.h>
 
 auto main() -> int {
-  std::printf("Hello world\n");
+  fmt::print("Hello world\n");
 }
