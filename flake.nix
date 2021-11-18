@@ -25,7 +25,6 @@
           nativeBuildInputs = with pkgs; [
             meson
             ninja
-            cmake
             pkg-config
             stdenv.cc
           ];
@@ -41,7 +40,6 @@
 
         devShell = pkgs.mkShell {
           packages = with pkgs; [
-            cmake
             clang
             fmt
             meson
