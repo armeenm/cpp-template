@@ -6,20 +6,19 @@
     utils.url = github:numtide/flake-utils;
   };
 
-  outputs = inputs@{ self, nixpkgs, utils }:
+  outputs = inputs@{ self, nixpkgs, utils, ... }:
     utils.lib.eachDefaultSystem (system:
       let
         name = "template";
+        version = "0.1.0";
 
-        pkgs = import nixpkgs {
-          inherit system;
-        };
+        pkgs = import nixpkgs { inherit system; };
         lib = pkgs.lib;
 
       in rec {
         packages.${name} = pkgs.stdenv.mkDerivation {
-          pname = name;
-          version = "0.1.0";
+          inherit name version;
+
           src = ./.;
           
           nativeBuildInputs = with pkgs; [
