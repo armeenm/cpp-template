@@ -6,33 +6,29 @@
     utils.url = github:numtide/flake-utils;
   };
 
-  outputs = inputs@{ self, nixpkgs, utils, ... }:
+  outputs = inputs@{ self, utils, ... }:
     utils.lib.eachDefaultSystem (system:
       let
         name = "template";
         version = "0.1.0";
 
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs.nix = inputs.nixpkgs.legacyPackages.${system};
+        stdenv = pkgs.nix.llvmPackages_13.stdenv;
+        mkShell = pkgs.nix.mkShell.override { inherit stdenv; };
 
-        stdenv = pkgs.llvmPackages_13.stdenv;
-
-        mkShell = pkgs.mkShell.override { inherit stdenv; };
-
-      in rec {
         packages.${name} = stdenv.mkDerivation {
           inherit version;
           pname = name;
 
           src = ./.;
           
-          nativeBuildInputs = with pkgs; [
+          nativeBuildInputs = with pkgs.nix; [
             meson
             ninja
             pkg-config
-            stdenv.cc
           ];
 
-          buildInputs = with pkgs; [
+          buildInputs = with pkgs.nix; [
             fmt
           ];
 
@@ -40,17 +36,17 @@
           mesonBuildType = "release";
         };
 
+      in {
+        inherit packages;
         defaultPackage = packages.${name};
 
         devShell = mkShell {
           hardeningDisable = [ "all" ];
-          packages = with pkgs; [
+          packages = with pkgs.nix; [
             fmt
-            llvmPackages_13.clang
             meson
             ninja
             pkg-config
-            stdenv.cc
           ];
         };
       }
