@@ -2,7 +2,7 @@
   description = "";
 
   inputs = {
-    nixpkgs.url = github:nixos/nixpkgs/nixos-unstable;
+    nixpkgs.url = github:nixos/nixpkgs;
     utils.url = github:numtide/flake-utils;
   };
 
@@ -12,12 +12,16 @@
         name = "template";
         version = "0.1.0";
 
-        pkgs = import nixpkgs { inherit system; };
-        lib = pkgs.lib;
+        pkgs = nixpkgs.legacyPackages.${system};
+
+        stdenv = pkgs.llvmPackages_13.stdenv;
+
+        mkShell = pkgs.mkShell.override { inherit stdenv; };
 
       in rec {
-        packages.${name} = pkgs.stdenv.mkDerivation {
-          inherit name version;
+        packages.${name} = stdenv.mkDerivation {
+          inherit version;
+          pname = name;
 
           src = ./.;
           
@@ -32,15 +36,17 @@
             fmt
           ];
 
+          hardeningEnable = [ "pie" ];
           mesonBuildType = "release";
         };
 
         defaultPackage = packages.${name};
 
-        devShell = pkgs.mkShell {
+        devShell = mkShell {
+          hardeningDisable = [ "all" ];
           packages = with pkgs; [
-            clang
             fmt
+            llvmPackages_13.clang
             meson
             ninja
             pkg-config

@@ -15,15 +15,15 @@ project(
 
 add_project_arguments(
   '-Wconversion',
-  '-Wduplicated-branches',
-  '-Wduplicated-cond',
+# '-Wduplicated-branches',
+# '-Wduplicated-cond',
   '-Wformat=2',
-  '-Wlogical-op',
+# '-Wlogical-op',
   '-Wnull-dereference',
   '-Wold-style-cast',
   '-Wpedantic',
   '-Wshadow',
-  '-Wuseless-cast',
+# '-Wuseless-cast',
   language: 'cpp'
 )
 
